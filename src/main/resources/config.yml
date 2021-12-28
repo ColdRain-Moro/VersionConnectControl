@@ -1,0 +1,7 @@
+# 版本对应服务器
+# 未声明的情况将连接至bc默认服务器
+version-server:
+  # protocol version
+  # 参考 https://minecraft.fandom.com/wiki/Protocol_version
+  # 大于等于该数字的服务器将被传送到frontier
+  754: 'frontier'

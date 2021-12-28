@@ -1,0 +1,5 @@
+name: VersionConnectionControl
+version: '${version}'
+author: Rain
+main: me.asgard.rain.vcc.VersionConnectionControl
+description: players of different version connect different server
