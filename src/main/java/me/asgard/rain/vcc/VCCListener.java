@@ -30,18 +30,25 @@ public class VCCListener implements Listener {
         conf.getSection("version-server").getKeys().forEach(s -> {
             list.add(new Pair<>(Integer.parseInt(s), conf.getString("version-server." + s)));
         });
-        registry = list.stream().sorted(Comparator.comparing(Pair<Integer, String>::getFirst).reversed()).collect(Collectors.toList());
+        registry = list.stream()
+                .sorted(Comparator.comparing(Pair<Integer, String>::getFirst).reversed())
+                .collect(Collectors.toList());
     }
 
     @EventHandler
     public void e(ServerConnectEvent event) {
+        ProxiedPlayer p = event.getPlayer();
+        int version = p.getPendingConnection().getVersion();
         // 初次加入
         if (event.getReason() == ServerConnectEvent.Reason.JOIN_PROXY) {
-            ProxiedPlayer p = event.getPlayer();
-            int version = p.getPendingConnection().getVersion();
             registry.stream().filter(pair -> version >= pair.first)
                     .findFirst()
                     .ifPresent(pair -> event.setTarget(ProxyServer.getInstance().getServerInfo(pair.second)));
+        } else if (event.getReason() == ServerConnectEvent.Reason.LOBBY_FALLBACK) {
+            // 阻止重定向
+            registry.stream().filter(pair -> version >= pair.first)
+                    .findFirst()
+                    .ifPresent(pair -> event.setCancelled(true));
         }
     }
 }
